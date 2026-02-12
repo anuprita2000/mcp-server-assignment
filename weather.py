@@ -3,20 +3,26 @@
 # https://modelcontextprotocol.io/quickstart/server
 # Source code reference: https://github.com/modelcontextprotocol/quickstart-resources/tree/main/weather-server-python
 
+import os
 from typing import Any
 
 import httpx
+from dotenv import load_dotenv
 from mcp.server.fastmcp import FastMCP
+
+# Load environment variables from .env file
+# Source: python-dotenv documentation - https://pypi.org/project/python-dotenv/
+load_dotenv()
 
 # Initialize FastMCP server
 # Source: MCP Python SDK - https://github.com/modelcontextprotocol/python-sdk
 mcp = FastMCP("weather")
 
-# Constants
+# Constants loaded from environment variables with sensible defaults
 # The National Weather Service (NWS) API is free and requires no authentication
 # API docs: https://www.weather.gov/documentation/services-web-api
-NWS_API_BASE = "https://api.weather.gov"
-USER_AGENT = "weather-app/1.0"
+NWS_API_BASE = os.getenv("NWS_API_BASE", "https://api.weather.gov")
+USER_AGENT = os.getenv("NWS_USER_AGENT", "weather-app/1.0")
 
 
 async def make_nws_request(url: str) -> dict[str, Any] | None:
