@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "weather": {
+      "command": "uv",
+      "args": [
+        "--directory",
+        "/Users/anuprita/mcp-server-assignment/mcp-server-assignment",
+        "run",
+        "weather.py"
+      ]
+    }
+  }
+}

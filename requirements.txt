@@ -1,0 +1,5 @@
+# Requirements for MCP Weather Server
+# Based on: https://modelcontextprotocol.io/quickstart/server
+
+mcp[cli]
+httpx
