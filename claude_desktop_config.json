@@ -1,12 +1,22 @@
 {
   "mcpServers": {
     "weather": {
-      "command": "uv",
+      "command": "/ABSOLUTE/PATH/TO/uv",
       "args": [
         "--directory",
-        "/Users/anuprita/mcp-server-assignment/mcp-server-assignment",
+        "/ABSOLUTE/PATH/TO/mcp-server-assignment",
         "run",
         "weather.py"
+      ],
+      "env": {
+        "NWS_API_BASE": "https://api.weather.gov",
+        "NWS_USER_AGENT": "weather-app/1.0"
+      }
+    },
+    "macos-calendar": {
+      "command": "node",
+      "args": [
+        "/ABSOLUTE/PATH/TO/mcp-server-assignment/macos-calendar-mcp/macos-calendar-mcp.js"
       ]
     }
   }

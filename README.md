@@ -1,20 +1,32 @@
-# MCP Weather Server
+# MCP Server Assignment
 
-A Model Context Protocol (MCP) server that provides weather forecast and alert data using the US National Weather Service (NWS) API. Built following the [official MCP Python quickstart tutorial](https://modelcontextprotocol.io/quickstart/server).
+This project contains two MCP (Model Context Protocol) servers for use with Claude for Desktop:
+
+1. **Weather Server** (`weather.py`) — Provides weather forecasts and alerts using the US National Weather Service API. Built following the [official MCP Python quickstart tutorial](https://modelcontextprotocol.io/quickstart/server).
+2. **Calendar Server** (`macos-calendar-mcp/`) — Schedules meetings and manages calendar events locally on macOS via AppleScript. Uses [xybstone/macos-calendar-mcp](https://github.com/xybstone/macos-calendar-mcp).
 
 ## Overview
 
-This MCP server exposes two tools:
+### Weather Server Tools
 
 - **`get_alerts`** — Get active weather alerts for a US state (by two-letter state code)
 - **`get_forecast`** — Get a weather forecast for a specific latitude/longitude location
 
-The server communicates over **stdio** transport using the [MCP Python SDK](https://github.com/modelcontextprotocol/python-sdk) and the [`FastMCP`](https://github.com/modelcontextprotocol/python-sdk) high-level API.
+### Calendar Server Tools
+
+- **`create-event`** — Schedule a new meeting (title, start/end time, calendar, description, location)
+- **`list-calendars`** — List all available calendars on your Mac
+- **`list-today-events`** — View today's schedule
+- **`search-events`** — Search for events by keyword
+
+The weather server communicates over **stdio** using the [MCP Python SDK](https://github.com/modelcontextprotocol/python-sdk). The calendar server communicates over **stdio** using the [MCP TypeScript SDK](https://github.com/modelcontextprotocol/typescript-sdk) and AppleScript for local Calendar.app automation.
 
 ## Prerequisites
 
 - **Python 3.10+**
+- **Node.js 16+** (for the calendar server)
 - **[uv](https://docs.astral.sh/uv/)** — fast Python package manager
+- **macOS** (for the calendar server — uses AppleScript)
 
 ### Install uv
 
@@ -32,19 +44,13 @@ Restart your terminal after installation.
 cd /path/to/mcp-server-assignment
 ```
 
-### 2. Initialize the project with uv
+### 2. Set up the Weather Server
 
 ```bash
 uv init
 uv venv
-source .venv/bin/activate   # macOS/Linux
-# .venv\Scripts\activate    # Windows
-```
-
-### 3. Install dependencies
-
-```bash
-uv add "mcp[cli]" httpx
+source .venv/bin/activate
+uv add "mcp[cli]" httpx python-dotenv
 ```
 
 Or install from the requirements file:
@@ -53,13 +59,29 @@ Or install from the requirements file:
 uv pip install -r requirements.txt
 ```
 
-## Running the Server
+### 3. Set up the Calendar Server
+
+```bash
+cd macos-calendar-mcp
+npm install
+cd ..
+```
+
+## Running the Servers
+
+### Weather Server
 
 ```bash
 uv run weather.py
 ```
 
-The server listens on **stdio** for JSON-RPC messages from an MCP client.
+### Calendar Server
+
+```bash
+node macos-calendar-mcp/macos-calendar-mcp.js
+```
+
+Both servers listen on **stdio** for JSON-RPC messages from an MCP client.
 
 ## Connecting to Claude for Desktop
 
@@ -70,7 +92,7 @@ The server listens on **stdio** for JSON-RPC messages from an MCP client.
    code ~/Library/Application\ Support/Claude/claude_desktop_config.json
    ```
 
-2. Add the weather server configuration (or copy `claude_desktop_config.json` from this repo and update the path):
+2. Add both server configurations (or copy `claude_desktop_config.json` from this repo and update paths):
 
    ```json
    {
@@ -82,13 +104,23 @@ The server listens on **stdio** for JSON-RPC messages from an MCP client.
            "/ABSOLUTE/PATH/TO/mcp-server-assignment",
            "run",
            "weather.py"
+         ],
+         "env": {
+           "NWS_API_BASE": "https://api.weather.gov",
+           "NWS_USER_AGENT": "weather-app/1.0"
+         }
+       },
+       "macos-calendar": {
+         "command": "node",
+         "args": [
+           "/ABSOLUTE/PATH/TO/mcp-server-assignment/macos-calendar-mcp/macos-calendar-mcp.js"
          ]
        }
      }
    }
    ```
 
-   > **Note:** Replace `/ABSOLUTE/PATH/TO/mcp-server-assignment` with the actual absolute path to this project. You may also need to use the full path to `uv` (find it with `which uv`).
+   > **Note:** Replace `/ABSOLUTE/PATH/TO/mcp-server-assignment` with the actual absolute path to this project. You may also need to use the full path to `uv` (find it with `which uv`) and `node` (find it with `which node`).
 
 3. Save the file and **restart Claude for Desktop**.
 
@@ -98,17 +130,32 @@ The server listens on **stdio** for JSON-RPC messages from an MCP client.
 
 Try these prompts in Claude for Desktop:
 
+**Weather:**
 - "What's the weather in Sacramento?"
 - "What are the active weather alerts in Texas?"
 
-> **Note:** The NWS API only supports US locations.
+**Calendar:**
+- "What calendars do I have?"
+- "Schedule a meeting called 'Team Standup' tomorrow at 10am for 30 minutes"
+- "What's on my calendar today?"
+
+> **Note:** The NWS API only supports US locations. The calendar server only works on macOS.
+
+### macOS Calendar Permissions
+
+On first use, macOS will prompt you to grant Calendar access. Click **Allow**. If you miss the prompt, go to **System Settings > Privacy & Security > Calendars** and enable access for the terminal/Claude Desktop app.
 
 ## Project Structure
 
 ```
 mcp-server-assignment/
-├── weather.py                 # MCP server implementation
+├── weather.py                 # Weather MCP server (Python)
+├── macos-calendar-mcp/        # Calendar MCP server (Node.js, AppleScript)
+│   ├── macos-calendar-mcp.js  # Main calendar server entry point
+│   ├── package.json           # Node.js dependencies
+│   └── README.md              # Calendar server docs
 ├── requirements.txt           # Python dependencies
+├── .env.example               # Environment variable template
 ├── claude_desktop_config.json # Example MCP client configuration
 └── README.md                  # This file
 ```
@@ -124,59 +171,54 @@ mcp-server-assignment/
 | Item | Details |
 |------|---------|
 | **GitHub Link** | [https://github.com/anuprita2000/mcp-server-assignment](https://github.com/anuprita2000/mcp-server-assignment) |
-| **Domain Choice** | Weather |
+| **Domain Choice** | Weather + Calendar (Meeting Scheduling) |
 | **Best Practice 1** | **Async I/O with proper error handling** — All NWS API calls use `httpx.AsyncClient` with timeouts and `raise_for_status()`, ensuring the server never blocks and gracefully handles network failures by returning user-friendly error messages instead of crashing. |
 | **Best Practice 2** | **Separation of concerns via helper functions** — API request logic (`make_nws_request`), data formatting (`format_alert`), and tool definitions (`get_alerts`, `get_forecast`) are cleanly separated. This makes the code easier to test, debug, and extend with new tools. |
 
 ## Architecture Diagram
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│                    MCP Client                           │
-│              (Claude for Desktop)                       │
-└──────────────────────┬──────────────────────────────────┘
-                       │  JSON-RPC over stdio
-                       ▼
-┌─────────────────────────────────────────────────────────┐
-│                  MCP Server (weather.py)                │
-│  ┌───────────────────────────────────────────────────┐  │
-│  │              FastMCP Framework                    │  │
-│  │         (protocol handling, routing)              │  │
-│  └───────────────────┬───────────────────────────────┘  │
-│                      │                                  │
-│          ┌───────────┴───────────┐                      │
-│          ▼                       ▼                      │
-│  ┌───────────────┐     ┌─────────────────┐              │
-│  │  get_alerts   │     │  get_forecast   │              │
-│  │    (tool)     │     │     (tool)      │              │
-│  │               │     │                 │              │
-│  │ Input: state  │     │ Input: lat, lon │              │
-│  │   (e.g. CA)   │     │  (e.g. 38, -121)│              │
-│  └───────┬───────┘     └────────┬────────┘              │
-│          │                      │                       │
-│          └──────────┬───────────┘                       │
-│                     ▼                                   │
-│  ┌───────────────────────────────────────────────────┐  │
-│  │           make_nws_request (helper)               │  │
-│  │     async HTTP client with error handling         │  │
-│  └───────────────────┬───────────────────────────────┘  │
-│                      │                                  │
-│  ┌───────────────────┴───────────────────────────────┐  │
-│  │           format_alert (helper)                   │  │
-│  │     formats raw JSON into readable strings        │  │
-│  └───────────────────────────────────────────────────┘  │
-└──────────────────────┬──────────────────────────────────┘
-                       │  HTTPS requests
-                       ▼
-┌─────────────────────────────────────────────────────────┐
-│          National Weather Service API                   │
-│            (https://api.weather.gov)                    │
-│                                                         │
-│  /alerts/active/area/{state}  → active weather alerts   │
-│  /points/{lat},{lon}          → grid point lookup       │
-│  /gridpoints/.../forecast     → detailed forecast       │
-└─────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────────────┐
+│                         MCP Client                                   │
+│                   (Claude for Desktop)                               │
+└────────────┬─────────────────────────────────┬───────────────────────┘
+             │ JSON-RPC over stdio             │ JSON-RPC over stdio
+             ▼                                 ▼
+┌────────────────────────────┐   ┌──────────────────────────────────┐
+│  Weather Server            │   │  Calendar Server                 │
+│  (weather.py — Python)     │   │  (macos-calendar-mcp — Node.js)  │
+│                            │   │                                  │
+│  ┌──────────────────────┐  │   │  ┌────────────────────────────┐  │
+│  │  FastMCP Framework   │  │   │  │  MCP TypeScript SDK        │  │
+│  └──────────┬───────────┘  │   │  └────────────┬───────────────┘  │
+│       ┌─────┴─────┐       │   │    ┌───────────┼───────────┐     │
+│       ▼           ▼       │   │    ▼           ▼           ▼     │
+│  ┌─────────┐ ┌─────────┐  │   │ ┌──────┐ ┌─────────┐ ┌───────┐  │
+│  │  get    │ │  get    │  │   │ │create│ │  list   │ │search │  │
+│  │ alerts  │ │forecast │  │   │ │-event│ │calendars│ │-events│  │
+│  └────┬────┘ └────┬────┘  │   │ └──┬───┘ └────┬────┘ └───┬───┘  │
+│       └─────┬─────┘       │   │    └─────┬─────┘         │      │
+│             ▼             │   │          ▼               ▼      │
+│  ┌──────────────────────┐  │   │  ┌────────────────────────────┐  │
+│  │  make_nws_request    │  │   │  │     AppleScript Engine     │  │
+│  │  (async HTTP client) │  │   │  │   (local OS automation)    │  │
+│  └──────────┬───────────┘  │   │  └────────────┬───────────────┘  │
+└─────────────┼──────────────┘   └───────────────┼──────────────────┘
+              │ HTTPS                            │ Local IPC
+              ▼                                  ▼
+┌────────────────────────────┐   ┌──────────────────────────────────┐
+│  National Weather Service  │   │   macOS Calendar.app             │
+│  API (api.weather.gov)     │   │   (iCloud/Google/Exchange/       │
+│                            │   │    Outlook calendars)            │
+│  /alerts/active/area/{st}  │   │                                  │
+│  /points/{lat},{lon}       │   │   No internet required.          │
+│  /gridpoints/.../forecast  │   │   No email access. Calendar only.│
+└────────────────────────────┘   └──────────────────────────────────┘
 ```
+
+### Security: Calendar Server Permissions
+
+The calendar server **cannot** access email, contacts, or any other data. It only uses macOS AppleScript to talk to Calendar.app. Even if Claude "tried" to read email, the server has no code or capability to do so — it is physically limited to calendar operations only.
 
 ## Reflection
 
@@ -198,3 +240,4 @@ The server is currently limited to US locations only, since it relies exclusivel
 - [MCP Python SDK (GitHub)](https://github.com/modelcontextprotocol/python-sdk)
 - [Quickstart Resources (GitHub)](https://github.com/modelcontextprotocol/quickstart-resources/tree/main/weather-server-python)
 - [National Weather Service API](https://www.weather.gov/documentation/services-web-api)
+- [macOS Calendar MCP Server (GitHub)](https://github.com/xybstone/macos-calendar-mcp) — Calendar server used for meeting scheduling
