@@ -1,0 +1,899 @@
+{
+  "_notes": {
+    "ats_types": {
+      "greenhouse": "Public API \u2014 no auth needed. board_token is the company's Greenhouse slug.",
+      "lever": "Public API \u2014 no auth needed. company_slug is the company's Lever identifier.",
+      "workday": "Semi-public POST API. tenant + site + wd_num must match the company's Workday config. Marked verified:false until confirmed.",
+      "ashby": "Public API \u2014 no auth needed. org_slug is the company's Ashby identifier (visible in jobs.ashbyhq.com/{org_slug}).",
+      "smartrecruiters": "Public API \u2014 no auth needed. company_id is the SmartRecruiters company identifier.",
+      "icims": "Public search API \u2014 no auth needed. tenant is the company-specific subdomain at {tenant}.icims.com. Find it from the company careers page URL, e.g. careers.company.com \u2192 view page source for icims.com reference. Cannot be guessed from company name."
+    },
+    "verified": "Greenhouse and Lever entries marked verified:true are confirmed. Workday tenant/site values marked verified:false are best-guess. Ashby and SmartRecruiters entries confirmed via public job board URLs.",
+    "broken_removed": "BCG, Apple, Bain, LinkedIn removed from Workday \u2014 these block the unauthenticated endpoint (401). Amazon, Google, Microsoft use their own ATS systems, not Workday.",
+    "icims_how_to_add": "To add an iCIMS company: go to their careers page, click any job, check the URL for pattern {tenant}.icims.com or view page source for icims.com. Add entry: {\"ats\": \"icims\", \"tenant\": \"{tenant}\"}"
+  },
+  "companies": {
+    "harbingermotors": {
+      "name": "Harbinger Motors",
+      "tier": 2,
+      "ats": "greenhouse",
+      "board_token": "harbingermotors",
+      "verified": true,
+      "notes": "EV startup, Garden Grove CA. Greenhouse confirmed."
+    },
+    "moelis": {
+      "name": "Moelis & Company",
+      "tier": 2,
+      "ats": "workday",
+      "tenant": "moelis",
+      "site": "Experienced-Hires",
+      "wd_num": 1,
+      "verified": true,
+      "notes": "Investment bank. Workday confirmed via moelis.wd1.myworkdayjobs.com."
+    },
+    "hubspot": {
+      "name": "HubSpot",
+      "tier": 2,
+      "ats": "greenhouse",
+      "board_token": "hubspotjobs",
+      "verified": true,
+      "notes": "Greenhouse confirmed via my.greenhouse.io/users/sign_in?job_board=hubspotjobs."
+    },
+    "liveramp": {
+      "name": "LiveRamp",
+      "tier": 2,
+      "ats": "workday",
+      "tenant": "liveramp",
+      "site": "LiveRampCareers",
+      "wd_num": 5,
+      "verified": true,
+      "notes": "Data connectivity. Workday confirmed via liveramp.wd5.myworkdayjobs.com."
+    },
+    "illumio": {
+      "name": "Illumio",
+      "tier": 2,
+      "ats": "ashby",
+      "org_slug": "illumio",
+      "verified": true,
+      "notes": "Cybersecurity unicorn. Ashby confirmed via jobs.ashbyhq.com/illumio."
+    },
+    "axon": {
+      "name": "Axon Enterprise",
+      "tier": 2,
+      "ats": "greenhouse",
+      "board_token": "axon",
+      "verified": true,
+      "notes": "Public safety tech. Greenhouse confirmed via job-boards.greenhouse.io/axon."
+    },
+    "abbott": {
+      "name": "Abbott Laboratories",
+      "tier": 2,
+      "ats": "workday",
+      "tenant": "abbott",
+      "site": "abbottcareers",
+      "wd_num": 5,
+      "verified": true,
+      "notes": "Covers Abbott Laboratories + Abbott Diabetes Care. Workday confirmed via abbott.wd5.myworkdayjobs.com."
+    },
+    "tranetechnologies": {
+      "name": "Trane Technologies",
+      "tier": 2,
+      "ats": "phenom",
+      "base_url": "https://careers.tranetechnologies.com",
+      "verified": true,
+      "notes": "HVAC/industrial. Phenom CareerConnect. Sitemap index at /sitemap.xml → /global/en/sitemap1-3.xml."
+    },
+    "renesas": {
+      "name": "Renesas Electronics",
+      "tier": 2,
+      "ats": "smartrecruiters",
+      "company_id": "RenesasElectronics",
+      "verified": true,
+      "notes": "Semiconductor company. SmartRecruiters confirmed via join.smartrecruiters.com/RenesasElectronics."
+    },
+    "zuora": {
+      "name": "Zuora",
+      "tier": 2,
+      "ats": "greenhouse",
+      "board_token": "zuora",
+      "verified": true,
+      "notes": "Subscription billing SaaS. Greenhouse confirmed via zuora.greenhouse.io/internal_job_board."
+    },
+    "qnity": {
+      "name": "Qnity Electronics",
+      "tier": 2,
+      "ats": "phenom",
+      "base_url": "https://careers.qnityelectronics.com",
+      "verified": true,
+      "notes": "DuPont spinoff (electronics vertical). Phenom CareerConnect ATS. Scraped via sitemap."
+    },
+    "uber": {
+      "name": "Uber",
+      "tier": 1,
+      "ats": "greenhouse",
+      "board_token": "uberfreight",
+      "verified": true,
+      "notes": "Token changed from uber to uberfreight"
+    },
+    "meta": {
+      "name": "Meta",
+      "tier": 1,
+      "ats": "smartrecruiters",
+      "company_id": "Meta",
+      "verified": true
+    },
+    "openai": {
+      "name": "OpenAI",
+      "tier": 1,
+      "ats": "ashby",
+      "org_slug": "openai",
+      "verified": true
+    },
+    "stripe": {
+      "name": "Stripe",
+      "tier": 1,
+      "ats": "greenhouse",
+      "board_token": "stripe",
+      "verified": true
+    },
+    "airbnb": {
+      "name": "Airbnb",
+      "tier": 1,
+      "ats": "greenhouse",
+      "board_token": "airbnb",
+      "verified": true
+    },
+    "doordash": {
+      "name": "DoorDash",
+      "tier": 2,
+      "ats": "greenhouse",
+      "board_token": "doordashusa",
+      "verified": true
+    },
+    "waymo": {
+      "name": "Waymo",
+      "tier": 2,
+      "ats": "greenhouse",
+      "board_token": "waymo",
+      "verified": true
+    },
+    "lyft": {
+      "name": "Lyft",
+      "tier": 3,
+      "ats": "greenhouse",
+      "board_token": "lyft",
+      "verified": true
+    },
+    "rivian": {
+      "name": "Rivian",
+      "tier": 3,
+      "ats": "smartrecruiters",
+      "company_id": "Rivian",
+      "verified": true
+    },
+    "spotify": {
+      "name": "Spotify",
+      "tier": 2,
+      "ats": "lever",
+      "company_slug": "spotify",
+      "verified": true
+    },
+    "databricks": {
+      "name": "Databricks",
+      "tier": 2,
+      "ats": "greenhouse",
+      "board_token": "databricks",
+      "verified": true
+    },
+    "snap": {
+      "name": "Snap",
+      "tier": 2,
+      "ats": "smartrecruiters",
+      "company_id": "Snap",
+      "verified": true
+    },
+    "pinterest": {
+      "name": "Pinterest",
+      "tier": 2,
+      "ats": "greenhouse",
+      "board_token": "pinterest",
+      "verified": true
+    },
+    "dropbox": {
+      "name": "Dropbox",
+      "tier": 3,
+      "ats": "greenhouse",
+      "board_token": "dropbox",
+      "verified": true
+    },
+    "reddit": {
+      "name": "Reddit",
+      "tier": 2,
+      "ats": "greenhouse",
+      "board_token": "reddit",
+      "verified": true
+    },
+    "coinbase": {
+      "name": "Coinbase",
+      "tier": 2,
+      "ats": "greenhouse",
+      "board_token": "coinbase",
+      "verified": true
+    },
+    "ramp": {
+      "name": "Ramp",
+      "tier": 2,
+      "ats": "ashby",
+      "org_slug": "ramp",
+      "verified": true
+    },
+    "paloaltonetworks": {
+      "name": "Palo Alto Networks",
+      "tier": 2,
+      "ats": "workday",
+      "tenant": "paloaltonetworks",
+      "site": "Palo_Alto_Networks_Careers",
+      "wd_num": 5,
+      "verified": false,
+      "notes": "Moved from Greenhouse to Workday \u2014 verify at jobs.paloaltonetworks.com"
+    },
+    "palantir": {
+      "name": "Palantir",
+      "tier": 2,
+      "ats": "lever",
+      "company_slug": "palantir",
+      "verified": true
+    },
+    "kearney": {
+      "name": "Kearney",
+      "tier": 2,
+      "ats": "workday",
+      "tenant": "kearney",
+      "site": "Kearney_Careers",
+      "wd_num": 5,
+      "verified": false,
+      "notes": "Moved from Lever \u2014 verify at kearney.com/work/careers"
+    },
+    "nvidia": {
+      "name": "NVIDIA",
+      "tier": 2,
+      "ats": "workday",
+      "tenant": "nvidia",
+      "site": "NVIDIAExternalCareerSite",
+      "wd_num": 5,
+      "verified": true
+    },
+    "salesforce": {
+      "name": "Salesforce",
+      "tier": 1,
+      "verified": true,
+      "ats": "workday",
+      "tenant": "salesforce",
+      "wd_num": 12,
+      "site": "External_Career_Site"
+    },
+    "servicenow": {
+      "name": "ServiceNow",
+      "tier": 1,
+      "ats": "workday",
+      "tenant": "servicenow",
+      "site": "External",
+      "wd_num": 5,
+      "verified": false,
+      "notes": "Verify at careers.servicenow.com"
+    },
+    "accenture": {
+      "name": "Accenture",
+      "tier": 1,
+      "verified": true,
+      "ats": "workday",
+      "tenant": "accenture",
+      "wd_num": 103,
+      "site": "AccentureCareers"
+    },
+    "deloitte": {
+      "name": "Deloitte",
+      "tier": 1,
+      "ats": "workday",
+      "tenant": "deloitte",
+      "site": "DeloitteUSCareers",
+      "wd_num": 5,
+      "verified": false,
+      "notes": "Verify at deloitte.com/us/en/careers"
+    },
+    "ibm": {
+      "name": "IBM",
+      "tier": 1,
+      "ats": "workday",
+      "tenant": "ibm",
+      "site": "ExternalCareerSite",
+      "wd_num": 3,
+      "verified": false,
+      "notes": "Verify at ibm.com/careers"
+    },
+    "mastercard": {
+      "name": "Mastercard",
+      "tier": 2,
+      "verified": true,
+      "ats": "workday",
+      "tenant": "mastercard",
+      "wd_num": 1,
+      "site": "CorporateCareers"
+    },
+    "paypal": {
+      "name": "PayPal",
+      "tier": 2,
+      "ats": "workday",
+      "tenant": "paypal",
+      "site": "paypal",
+      "wd_num": 5,
+      "verified": false,
+      "notes": "Verify at careers.paypalbenefits.com"
+    },
+    "capitalone": {
+      "name": "Capital One",
+      "tier": 2,
+      "verified": true,
+      "ats": "workday",
+      "tenant": "capitalone",
+      "wd_num": 12,
+      "site": "Capital_One"
+    },
+    "adobe": {
+      "name": "Adobe",
+      "tier": 2,
+      "ats": "workday",
+      "tenant": "adobe",
+      "site": "adobeexternalcareersite",
+      "wd_num": 5,
+      "verified": false,
+      "notes": "Verify at adobe.com/careers"
+    },
+    "cisco": {
+      "name": "Cisco",
+      "tier": 2,
+      "ats": "workday",
+      "tenant": "cisco",
+      "site": "CiscoExternalCareers",
+      "wd_num": 5,
+      "verified": false,
+      "notes": "Verify at jobs.cisco.com"
+    },
+    "qualcomm": {
+      "name": "Qualcomm",
+      "tier": 2,
+      "ats": "workday",
+      "tenant": "qualcomm",
+      "site": "External",
+      "wd_num": 5,
+      "verified": false,
+      "notes": "Verify at qualcomm.com/company/careers"
+    },
+    "oracle": {
+      "name": "Oracle",
+      "tier": 2,
+      "ats": "workday",
+      "tenant": "oracle",
+      "site": "oracle",
+      "wd_num": 1,
+      "verified": false,
+      "notes": "Verify at oracle.com/careers"
+    },
+    "dell": {
+      "name": "Dell Technologies",
+      "tier": 2,
+      "ats": "workday",
+      "tenant": "dell",
+      "site": "External",
+      "wd_num": 5,
+      "verified": false,
+      "notes": "Verify at dell.com/en-us/dt/corporate/careers"
+    },
+    "walmart": {
+      "name": "Walmart",
+      "tier": 2,
+      "ats": "workday",
+      "tenant": "walmart",
+      "site": "External",
+      "wd_num": 5,
+      "verified": false,
+      "notes": "Verify at careers.walmart.com"
+    },
+    "pg": {
+      "name": "P&G",
+      "tier": 2,
+      "ats": "workday",
+      "tenant": "pg",
+      "site": "PGExternalCareerSite",
+      "wd_num": 5,
+      "verified": false,
+      "notes": "Verify at us.pg.com/jobs"
+    },
+    "nike": {
+      "name": "Nike",
+      "tier": 2,
+      "ats": "workday",
+      "tenant": "nike",
+      "site": "External",
+      "wd_num": 1,
+      "verified": false,
+      "notes": "Verify at jobs.nike.com \u2014 wd_num may be 1 or 5"
+    },
+    "honeywell": {
+      "name": "Honeywell",
+      "tier": 2,
+      "ats": "workday",
+      "tenant": "honeywell",
+      "site": "honeywell",
+      "wd_num": 1,
+      "verified": false,
+      "notes": "Verify at careers.honeywell.com"
+    },
+    "unilever": {
+      "name": "Unilever",
+      "tier": 2,
+      "ats": "workday",
+      "tenant": "unilever",
+      "site": "External",
+      "wd_num": 5,
+      "verified": false,
+      "notes": "Verify at unilever.com/careers"
+    },
+    "generalmills": {
+      "name": "General Mills",
+      "tier": 2,
+      "ats": "workday",
+      "tenant": "generalmills",
+      "site": "External",
+      "wd_num": 5,
+      "verified": false,
+      "notes": "Verify at careers.generalmills.com"
+    },
+    "pfizer": {
+      "name": "Pfizer",
+      "tier": 2,
+      "ats": "workday",
+      "tenant": "pfizer",
+      "site": "pfizer",
+      "wd_num": 5,
+      "verified": false,
+      "notes": "Verify at pfizer.com/about/careers"
+    },
+    "iqvia": {
+      "name": "IQVIA",
+      "tier": 2,
+      "ats": "workday",
+      "tenant": "iqvia",
+      "site": "IQVIA_External",
+      "wd_num": 5,
+      "verified": false,
+      "notes": "Verify at jobs.iqvia.com"
+    },
+    "alixpartners": {
+      "name": "AlixPartners",
+      "tier": 2,
+      "ats": "workday",
+      "tenant": "alixpartners",
+      "site": "AlixPartners",
+      "wd_num": 5,
+      "verified": false,
+      "notes": "Verify at alixpartners.com/careers"
+    },
+    "kpmg": {
+      "name": "KPMG",
+      "tier": 2,
+      "ats": "workday",
+      "tenant": "kpmg",
+      "site": "KPMG_External_Career_Site",
+      "wd_num": 5,
+      "verified": false,
+      "notes": "Verify at kpmg.com/us/en/careers.html"
+    },
+    "ey": {
+      "name": "EY",
+      "tier": 1,
+      "ats": "workday",
+      "tenant": "ey",
+      "site": "EY_External_Careers",
+      "wd_num": 5,
+      "verified": false,
+      "notes": "Verify at ey.com/en_us/careers"
+    },
+    "mckinsey": {
+      "name": "McKinsey & Company",
+      "tier": 1,
+      "ats": "workday",
+      "tenant": "mckinsey",
+      "site": "McKinsey_Careers",
+      "wd_num": 5,
+      "verified": false,
+      "notes": "Verify at mckinsey.com/careers"
+    },
+    "anthropic": {
+      "name": "Anthropic",
+      "tier": 1,
+      "ats": "greenhouse",
+      "board_token": "anthropic",
+      "verified": true
+    },
+    "linear": {
+      "name": "Linear",
+      "tier": 3,
+      "ats": "ashby",
+      "org_slug": "linear",
+      "verified": true
+    },
+    "vercel": {
+      "name": "Vercel",
+      "tier": 3,
+      "ats": "ashby",
+      "org_slug": "vercel",
+      "verified": true
+    },
+    "scale-ai": {
+      "name": "Scale AI",
+      "tier": 2,
+      "ats": "greenhouse",
+      "board_token": "scaleai",
+      "verified": true
+    },
+    "booz-allen": {
+      "name": "Booz Allen Hamilton",
+      "tier": 1,
+      "ats": "smartrecruiters",
+      "company_id": "BoozAllenHamilton",
+      "verified": true
+    },
+    "hpe": {
+      "name": "Hewlett Packard Enterprise",
+      "tier": 2,
+      "ats": "smartrecruiters",
+      "company_id": "HewlettPackardEnterprise",
+      "verified": true
+    },
+    "philips": {
+      "name": "Philips",
+      "tier": 2,
+      "ats": "smartrecruiters",
+      "company_id": "Philips",
+      "verified": true
+    },
+    "tesla": {
+      "name": "Tesla",
+      "tier": 1,
+      "ats": "smartrecruiters",
+      "company_id": "Tesla",
+      "verified": true
+    },
+    "amazon": {
+      "name": "Amazon",
+      "tier": 1,
+      "ats": "smartrecruiters",
+      "company_id": "Amazon",
+      "verified": true
+    },
+    "microsoft": {
+      "name": "Microsoft",
+      "tier": 1,
+      "ats": "smartrecruiters",
+      "company_id": "Microsoft",
+      "verified": true
+    },
+    "google": {
+      "name": "Google",
+      "tier": 1,
+      "ats": "smartrecruiters",
+      "company_id": "Google",
+      "verified": true
+    },
+    "apple": {
+      "name": "Apple",
+      "tier": 1,
+      "ats": "smartrecruiters",
+      "company_id": "Apple",
+      "verified": true
+    },
+    "tiktok": {
+      "name": "TikTok",
+      "tier": 1,
+      "ats": "smartrecruiters",
+      "company_id": "TikTok",
+      "verified": true
+    },
+    "bytedance": {
+      "name": "ByteDance",
+      "tier": 1,
+      "ats": "smartrecruiters",
+      "company_id": "ByteDance",
+      "verified": true
+    },
+    "expedia": {
+      "name": "Expedia",
+      "tier": 2,
+      "ats": "smartrecruiters",
+      "company_id": "Expedia",
+      "verified": true
+    },
+    "citadel": {
+      "name": "Citadel",
+      "tier": 2,
+      "ats": "smartrecruiters",
+      "company_id": "Citadel",
+      "verified": true
+    },
+    "bloomberg": {
+      "name": "Bloomberg",
+      "tier": 2,
+      "ats": "smartrecruiters",
+      "company_id": "Bloomberg",
+      "verified": true
+    },
+    "wellsfargo": {
+      "name": "Wells Fargo",
+      "tier": 2,
+      "ats": "smartrecruiters",
+      "company_id": "WellsFargo",
+      "verified": true
+    },
+    "americanexpress": {
+      "name": "American Express",
+      "tier": 2,
+      "ats": "smartrecruiters",
+      "company_id": "AmericanExpress",
+      "verified": true
+    },
+    "cognizant": {
+      "name": "Cognizant",
+      "tier": 2,
+      "ats": "smartrecruiters",
+      "company_id": "Cognizant",
+      "verified": true
+    },
+    "wipro": {
+      "name": "Wipro",
+      "tier": 2,
+      "ats": "smartrecruiters",
+      "company_id": "Wipro",
+      "verified": true
+    },
+    "abbvie": {
+      "name": "AbbVie",
+      "tier": 2,
+      "ats": "smartrecruiters",
+      "company_id": "AbbVie",
+      "verified": true
+    },
+    "medtronic": {
+      "name": "Medtronic",
+      "tier": 2,
+      "ats": "smartrecruiters",
+      "company_id": "Medtronic",
+      "verified": true
+    },
+    "amgen": {
+      "name": "Amgen",
+      "tier": 2,
+      "ats": "smartrecruiters",
+      "company_id": "Amgen",
+      "verified": true
+    },
+    "roche": {
+      "name": "Roche",
+      "tier": 2,
+      "ats": "smartrecruiters",
+      "company_id": "Roche",
+      "verified": true
+    },
+    "sanofi": {
+      "name": "Sanofi",
+      "tier": 2,
+      "ats": "smartrecruiters",
+      "company_id": "Sanofi",
+      "verified": true
+    },
+    "shell": {
+      "name": "Shell",
+      "tier": 2,
+      "ats": "smartrecruiters",
+      "company_id": "Shell",
+      "verified": true
+    },
+    "hsbc": {
+      "name": "HSBC",
+      "tier": 2,
+      "ats": "smartrecruiters",
+      "company_id": "HSBC",
+      "verified": true
+    },
+    "citi": {
+      "name": "Citi",
+      "tier": 2,
+      "ats": "smartrecruiters",
+      "company_id": "Citi",
+      "verified": true
+    },
+    "morganstanley": {
+      "name": "Morgan Stanley",
+      "tier": 2,
+      "ats": "smartrecruiters",
+      "company_id": "MorganStanley",
+      "verified": true
+    },
+    "goldmansachs": {
+      "name": "Goldman Sachs",
+      "tier": 1,
+      "ats": "smartrecruiters",
+      "company_id": "GoldmanSachs",
+      "verified": true
+    },
+    "micron": {
+      "name": "Micron",
+      "tier": 2,
+      "ats": "smartrecruiters",
+      "company_id": "Micron",
+      "verified": true
+    },
+    "jpmorgan": {
+      "name": "JPMorgan Chase",
+      "tier": 1,
+      "ats": "smartrecruiters",
+      "company_id": "JPMorganChase",
+      "verified": true
+    },
+    "bankofamerica": {
+      "name": "Bank of America",
+      "tier": 1,
+      "ats": "smartrecruiters",
+      "company_id": "BankofAmerica",
+      "verified": true
+    },
+    "deutschebank": {
+      "name": "Deutsche Bank",
+      "tier": 2,
+      "ats": "smartrecruiters",
+      "company_id": "DeutscheBank",
+      "verified": true
+    },
+    "ubs": {
+      "name": "UBS",
+      "tier": 2,
+      "ats": "smartrecruiters",
+      "company_id": "UBS",
+      "verified": true
+    },
+    "nomura": {
+      "name": "Nomura",
+      "tier": 2,
+      "ats": "smartrecruiters",
+      "company_id": "Nomura",
+      "verified": true
+    },
+    "statestreet": {
+      "name": "State Street",
+      "tier": 2,
+      "ats": "smartrecruiters",
+      "company_id": "StateStreet",
+      "verified": true
+    },
+    "royalbankofcanada": {
+      "name": "Royal Bank of Canada",
+      "tier": 2,
+      "ats": "smartrecruiters",
+      "company_id": "RoyalBankofCanada",
+      "verified": true
+    },
+    "bnpparibas": {
+      "name": "BNP Paribas",
+      "tier": 2,
+      "ats": "smartrecruiters",
+      "company_id": "BNPParibas",
+      "verified": true
+    },
+    "pepsi": {
+      "name": "PepsiCo",
+      "tier": 2,
+      "ats": "workday",
+      "tenant": "pepsico",
+      "site": "PepsiCoJobs",
+      "wd_num": 5,
+      "verified": false,
+      "notes": "Verify at pepsicojobs.com"
+    },
+    "nestle": {
+      "name": "Nestlé",
+      "tier": 2,
+      "ats": "smartrecruiters",
+      "company_id": "Nestle",
+      "verified": true
+    },
+    "loreal": {
+      "name": "L'Oréal",
+      "tier": 2,
+      "ats": "smartrecruiters",
+      "company_id": "LOreal",
+      "verified": true
+    },
+    "elililly": {
+      "name": "Eli Lilly",
+      "tier": 2,
+      "ats": "workday",
+      "tenant": "lilly",
+      "site": "Lilly_Careers",
+      "wd_num": 5,
+      "verified": false,
+      "notes": "Verify at lilly.com/careers"
+    },
+    "gilead": {
+      "name": "Gilead Sciences",
+      "tier": 2,
+      "ats": "workday",
+      "tenant": "gilead",
+      "site": "External",
+      "wd_num": 5,
+      "verified": false,
+      "notes": "Verify at gilead.com/careers"
+    },
+    "exlservice": {
+      "name": "EXL Service",
+      "tier": 2,
+      "ats": "smartrecruiters",
+      "company_id": "EXLService",
+      "verified": true
+    },
+    "techmahindra": {
+      "name": "Tech Mahindra",
+      "tier": 2,
+      "ats": "smartrecruiters",
+      "company_id": "TechMahindra",
+      "verified": true
+    },
+    "tata": {
+      "name": "Tata Consultancy Services",
+      "tier": 2,
+      "ats": "smartrecruiters",
+      "company_id": "TataConsultancyServices",
+      "verified": true
+    },
+    "comcast": {
+      "name": "Comcast",
+      "tier": 2,
+      "ats": "workday",
+      "tenant": "comcast",
+      "site": "Comcast_Careers",
+      "wd_num": 5,
+      "verified": false,
+      "notes": "Verify at jobs.comcast.com"
+    },
+    "hp": {
+      "name": "HP Inc.",
+      "tier": 2,
+      "ats": "smartrecruiters",
+      "company_id": "HP",
+      "verified": true
+    },
+    "vmware": {
+      "name": "VMware",
+      "tier": 2,
+      "ats": "workday",
+      "tenant": "broadcom",
+      "site": "External_Career_Site",
+      "wd_num": 5,
+      "verified": false,
+      "notes": "VMware acquired by Broadcom 2023 — careers now on Broadcom Workday. Verify at careers.broadcom.com"
+    },
+    "societegeneral": {
+      "name": "Societe Generale",
+      "tier": 2,
+      "ats": "smartrecruiters",
+      "company_id": "SocieteGenerale",
+      "verified": true
+    },
+    "kraftheinz": {
+      "name": "Kraft Heinz",
+      "tier": 2,
+      "ats": "smartrecruiters",
+      "company_id": "KraftHeinz",
+      "verified": true
+    }
+  }
+}
