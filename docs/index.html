@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MCP Tools & Career Ops Agent | Anuprita Kaple</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+  :root {
+    --bg: #F1F5F9;
+    --panel: #FFFFFF;
+    --panel-2: #F8FAFC;
+    --line: #E2E8F0;
+    --text: #0F172A;
+    --text-dim: #475569;
+    --accent: #B45309;
+    --accent-dim: rgba(180,83,9,0.10);
+    --navy: #0F172A;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', -apple-system, sans-serif;
+    line-height: 1.6;
+  }
+  code, .mono { font-family: ui-monospace, SFMono-Regular, 'Roboto Mono', monospace; }
+
+  .wrap { max-width: 920px; margin: 0 auto; padding: 0 24px; }
+
+  .pipe-step, .gallery-card, .accuracy-banner, .layer, .meta-card, .table-wrap {
+    box-shadow: 0 1px 2px rgba(15,23,42,0.04), 0 1px 3px rgba(15,23,42,0.06);
+  }
+  .pipe-step { transition: transform 0.15s ease, box-shadow 0.15s ease; }
+  .pipe-step:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(15,23,42,0.08); }
+
+  header.hero {
+    padding: 44px 0 36px 0;
+    border-bottom: 1px solid var(--line);
+    background: linear-gradient(180deg, rgba(180,83,9,0.05), transparent 60%);
+  }
+  .eyebrow-line {
+    display: flex; align-items: center; gap: 10px;
+    color: var(--accent); font-family: ui-monospace, monospace;
+    font-size: 0.8rem; margin-bottom: 12px;
+  }
+  .eyebrow-line .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 8px var(--accent); }
+  h1 { font-size: 2.1rem; line-height: 1.15; margin: 0 0 12px 0; font-weight: 800; letter-spacing: -0.02em; max-width: 22ch; }
+  .tagline { font-size: 1.02rem; color: var(--text-dim); max-width: 66ch; margin: 0 0 20px 0; }
+  .hero-links { display: flex; gap: 12px; flex-wrap: wrap; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 9px 16px; border-radius: 8px; text-decoration: none;
+    font-weight: 600; font-size: 0.88rem; transition: all 0.15s ease;
+  }
+  .btn-primary { background: var(--accent); color: #FFFFFF; font-weight: 700; }
+  .btn-primary:hover { background: #92400E; }
+  .btn-outline { border: 1px solid var(--line); color: var(--text); }
+  .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+
+  section { padding: 32px 0; border-bottom: 1px solid var(--line); }
+  section:last-of-type { border-bottom: none; }
+  h2 { font-size: 1.3rem; margin: 0 0 6px 0; font-weight: 800; }
+  h3 { font-size: 1.05rem; margin: 24px 0 4px 0; font-weight: 700; }
+  .section-sub { color: var(--text-dim); margin: 0 0 18px 0; max-width: 66ch; }
+  .section-tag {
+    display: inline-block; font-family: ui-monospace, monospace; font-size: 0.7rem;
+    color: var(--accent); background: var(--accent-dim); padding: 3px 8px; border-radius: 6px;
+    margin-bottom: 10px; font-weight: 700; letter-spacing: 0.02em;
+  }
+
+  /* Pipeline */
+  .pipeline { display: flex; align-items: stretch; gap: 0; flex-wrap: wrap; }
+  .pipe-step { flex: 1 1 140px; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 14px; position: relative; min-width: 140px; }
+  .pipe-step .num { font-family: ui-monospace, monospace; color: var(--accent); font-size: 0.76rem; }
+  .pipe-step h4 { margin: 8px 0 6px 0; font-size: 0.94rem; }
+  .pipe-step p { margin: 0; font-size: 0.82rem; color: var(--text-dim); }
+  .pipe-arrow { display: flex; align-items: center; justify-content: center; color: var(--accent); font-size: 1.2rem; padding: 0 4px; flex: 0 0 auto; }
+  @media (max-width: 700px) { .pipeline { flex-direction: column; } .pipe-arrow { transform: rotate(90deg); padding: 4px 0; } }
+
+  /* Tool cards */
+  .tool-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px,1fr)); gap: 12px; margin-top: 8px; }
+  .tool-card { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 14px; box-shadow: 0 1px 2px rgba(15,23,42,0.04);; }
+  .tool-card .tname { font-family: ui-monospace, monospace; color: var(--accent); font-weight: 700; font-size: 0.86rem; }
+  .tool-card p { margin: 6px 0 0 0; font-size: 0.82rem; color: var(--text-dim); }
+
+  /* Stat banner */
+  .accuracy-banner {
+    display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
+    background: var(--panel); border: 1px solid var(--line); border-radius: 8px;
+    padding: 14px 20px; margin-bottom: 18px;
+    box-shadow: 0 1px 2px rgba(15,23,42,0.04), 0 1px 3px rgba(15,23,42,0.06);
+  }
+  .accuracy-banner .big-num { font-family: ui-monospace, monospace; font-size: 1.7rem; color: var(--accent); font-weight: 700; line-height: 1; }
+  .accuracy-banner .big-num-label { font-size: 0.72rem; color: var(--text-dim); margin-top: 2px; }
+  .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px,1fr)); gap: 10px; margin-bottom: 18px; }
+  .stat-card { background: var(--panel-2); border: 1px solid var(--line); border-radius: 8px; padding: 10px 14px; }
+  .stat-card .k { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-dim); margin-bottom: 2px; }
+  .stat-card .v { font-family: ui-monospace, monospace; font-size: 1rem; color: var(--accent); font-weight: 700; }
+
+  /* ATS distribution bars */
+  .dist-row { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+  .dist-name { width: 120px; font-size: 0.82rem; }
+  .dist-track { flex: 1; height: 10px; background: var(--panel-2); border-radius: 5px; overflow: hidden; }
+  .dist-fill { height: 100%; background: var(--accent); border-radius: 5px; }
+  .dist-count { width: 34px; text-align: right; font-family: ui-monospace, monospace; font-size: 0.78rem; color: var(--text-dim); }
+
+  /* Explorer */
+  .explorer-controls { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
+  .explorer-controls input, .explorer-controls select {
+    font-family: 'Inter', sans-serif; font-size: 0.85rem;
+    padding: 8px 12px; border-radius: 6px; border: 1px solid var(--line);
+    background: var(--panel); color: var(--text);
+  }
+  .explorer-controls input { flex: 1 1 200px; }
+  .table-wrap { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+  th { text-align: left; color: var(--text-dim); font-weight: 600; font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.04em; padding: 8px 14px; border-bottom: 1px solid var(--line); background: var(--panel-2); position: sticky; top: 0; }
+  td { padding: 7px 14px; border-bottom: 1px solid rgba(15,23,42,0.04); }
+  .table-scroll { max-height: 340px; overflow-y: auto; }
+  .pill { display: inline-block; font-family: ui-monospace, monospace; font-size: 0.7rem; padding: 2px 8px; border-radius: 5px; }
+  .pill-verified { background: rgba(180,83,9,0.10); color: #92400E; }
+  .pill-unverified { background: rgba(220,38,38,0.08); color: #B91C1C; }
+  .row-count { font-family: ui-monospace, monospace; font-size: 0.78rem; color: var(--text-dim); margin-top: 8px; }
+
+  /* Self-healing log */
+  .log-entry { display: flex; gap: 12px; padding: 12px 0; border-bottom: 1px solid rgba(15,23,42,0.06); }
+  .log-entry:last-child { border-bottom: none; }
+  .log-icon { flex: 0 0 auto; width: 22px; height: 22px; border-radius: 50%; background: var(--accent-dim); color: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; }
+  .log-body .company { font-weight: 700; font-size: 0.9rem; }
+  .log-body .note { font-size: 0.84rem; color: var(--text-dim); margin-top: 2px; }
+
+  footer { padding: 28px 0 44px 0; color: var(--text-dim); font-size: 0.86rem; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+  footer a { color: var(--accent); text-decoration: none; }
+
+  /* Protocol console */
+  .console-highlight {
+    border: 2px solid var(--accent);
+    background: linear-gradient(160deg, rgba(180,83,9,0.07), rgba(180,83,9,0.02));
+    border-radius: 14px;
+    padding: 22px 24px 26px 24px;
+    box-shadow: 0 4px 20px rgba(180,83,9,0.18), 0 0 0 4px rgba(180,83,9,0.05);
+    margin-top: 12px;
+  }
+  .console-highlight h3 { margin-top: 0; font-size: 1.2rem; }
+  .console-note { font-size: 0.86rem; color: var(--text-dim); background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 12px 16px; margin-bottom: 16px; }
+  .console-tabs { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 18px; }
+  .console-tab {
+    font-family: ui-monospace, monospace; font-size: 0.92rem; font-weight: 700;
+    background: var(--panel); border: 2px solid var(--line); border-radius: 8px;
+    padding: 10px 16px; cursor: pointer; color: var(--text-dim);
+    transition: all 0.15s ease;
+  }
+  .console-tab:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-1px); }
+  .console-tab.active { border-color: var(--accent); color: #FFFFFF; background: var(--accent); box-shadow: 0 2px 8px rgba(180,83,9,0.35); }
+  .console-body { display: flex; gap: 20px; flex-wrap: wrap; }
+  .console-form { flex: 1 1 240px; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 16px; box-shadow: 0 1px 2px rgba(15,23,42,0.04); }
+  .console-form p.desc { margin: 0 0 12px 0; font-size: 0.84rem; color: var(--text-dim); }
+  .field-row { margin-bottom: 10px; }
+  .field-row label { display: block; font-size: 0.76rem; color: var(--text-dim); margin-bottom: 3px; }
+  .field-row input {
+    width: 100%; font-family: 'Inter', sans-serif; font-size: 0.85rem;
+    padding: 7px 10px; border-radius: 6px; border: 1px solid var(--line);
+  }
+  .console-outputs { flex: 1 1 300px; display: flex; flex-direction: column; gap: 12px; }
+  .code-panel { background: #0F172A; border-radius: 8px; padding: 16px; border: 1px solid rgba(180,83,9,0.3); }
+  .code-panel .panel-label { font-family: ui-monospace, monospace; font-size: 0.72rem; color: #FCD34D; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+  .code-panel pre { margin: 0; font-family: ui-monospace, monospace; font-size: 0.82rem; color: #E2E8F0; white-space: pre-wrap; word-break: break-word; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="hero">
+    <div class="eyebrow-line"><span class="dot"></span> Agentic AI &amp; Automation</div>
+    <h1>MCP Tools &amp; Career Ops Agent</h1>
+    <p class="tagline">Two systems built to give an AI assistant real hands: one exposes live weather and calendar tools to Claude Desktop over the Model Context Protocol; the other runs unattended twice a day, scraping 110 companies' job boards so I don't have to.</p>
+    <div class="hero-links">
+      <a class="btn btn-primary" href="https://github.com/anuprita2000/mcp-server-assignment" target="_blank" rel="noopener">View source on GitHub</a>
+      <a class="btn btn-outline" href="#career-ops">Jump to Career Ops Agent ↓</a>
+    </div>
+  </header>
+
+  <section id="mcp-tools">
+    <div class="section-tag">PART 1</div>
+    <h2>MCP Weather &amp; Calendar Tools</h2>
+    <p class="section-sub">Two Model Context Protocol servers — one in Python, one in Node.js — that give Claude Desktop real-world tools it can call directly, over a local stdio JSON-RPC connection. No cloud middleman.</p>
+
+    <div class="pipeline">
+      <div class="pipe-step"><div class="num">01</div><h4>You ask Claude</h4><p>"What's the weather in Austin?" or "Schedule a call for 3pm."</p></div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-step"><div class="num">02 · STDIO</div><h4>Claude Desktop</h4><p>Routes the request to the right local MCP server as JSON-RPC.</p></div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-step"><div class="num">03 · PYTHON / JS</div><h4>MCP Server</h4><p>Weather server (async httpx) or Calendar server (AppleScript).</p></div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-step"><div class="num">04</div><h4>Real action</h4><p>Live NWS forecast, or a real event created on your Mac's Calendar.</p></div>
+    </div>
+
+    <h3>The 6 tools exposed</h3>
+    <div class="tool-grid">
+      <div class="tool-card"><div class="tname">get_alerts(state)</div><p>Active weather alerts for a US state, from the live National Weather Service API.</p></div>
+      <div class="tool-card"><div class="tname">get_forecast(lat, lon)</div><p>5-period detailed forecast for any US coordinate.</p></div>
+      <div class="tool-card"><div class="tname">create-event(...)</div><p>Schedules a real macOS Calendar event via AppleScript automation.</p></div>
+      <div class="tool-card"><div class="tname">list-calendars()</div><p>Lists every calendar available on the Mac (Personal, Work, etc.).</p></div>
+      <div class="tool-card"><div class="tname">list-today-events()</div><p>Returns today's full schedule.</p></div>
+      <div class="tool-card"><div class="tname">search-events(query)</div><p>Keyword search across calendar events.</p></div>
+    </div>
+
+    <div class="console-highlight">
+      <h3>Try the protocol console</h3>
+      <div class="console-note">This is real: the request below is byte-for-byte what Claude Desktop sends over stdio when it calls one of these tools — pulled straight from the actual code's parameter schemas. The response shown is example output in the exact format the tool returns; live runs pull real NWS data or your real calendar.</div>
+      <div class="console-tabs" id="console-tabs"></div>
+      <div class="console-body">
+        <div class="console-form">
+          <p class="desc" id="console-desc"></p>
+          <div id="console-fields"></div>
+        </div>
+        <div class="console-outputs">
+          <div class="code-panel">
+            <div class="panel-label">JSON-RPC Request (stdio)</div>
+            <pre id="console-request"></pre>
+          </div>
+          <div class="code-panel">
+            <div class="panel-label">Example Response</div>
+            <pre id="console-response"></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="career-ops">
+    <div class="section-tag">PART 2</div>
+    <h2>Career Ops Agent</h2>
+    <p class="section-sub">An autonomous job-search system that runs completely unattended, twice a day, on a real Mac's <code>launchd</code> scheduler — with self-healing logic that repairs its own scrapers when companies quietly change their job-board setup.</p>
+
+    <div class="accuracy-banner">
+      <div><div class="big-num" id="stat-companies">—</div><div class="big-num-label">companies tracked</div></div>
+      <div><div class="big-num" id="stat-ats">—</div><div class="big-num-label">ATS platforms</div></div>
+      <div><div class="big-num" id="stat-verified">—</div><div class="big-num-label">auto-verified</div></div>
+    </div>
+
+    <div class="pipeline">
+      <div class="pipe-step"><div class="num">01 · 9AM &amp; 2PM</div><h4>Scheduled trigger</h4><p>launchd fires run_job_search.py — with a catchup job covering missed runs after sleep.</p></div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-step"><div class="num">02</div><h4>Scrape</h4><p>110 companies across 6 ATS APIs, plus Otta, Remote Rocketship, Indeed RSS, Gmail alerts.</p></div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-step"><div class="num">03</div><h4>Filter</h4><p>Keyword, experience-level, location, and visa-sponsorship-language checks.</p></div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-step"><div class="num">04</div><h4>Dedupe</h4><p>Cross-checked against every job seen before — never repeats a listing.</p></div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-step"><div class="num">05</div><h4>Deliver</h4><p>New rows in an Excel tracker + an HTML email digest.</p></div>
+    </div>
+
+    <h3>ATS platform distribution</h3>
+    <p class="section-sub">Real counts from the live <code>company_ats_map.json</code> this system runs against.</p>
+    <div id="dist-chart"></div>
+
+    <div class="console-highlight">
+      <h3>Explore all 110 tracked companies</h3>
+      <p class="section-sub">This isn't a mockup — it's the actual list the scraper reads every run. Search or filter it.</p>
+      <div class="explorer-controls">
+        <input type="text" id="search-box" placeholder="Search company name...">
+        <select id="ats-filter"><option value="all">All ATS platforms</option></select>
+        <select id="tier-filter">
+          <option value="all">All tiers</option>
+          <option value="1">Tier 1</option>
+          <option value="2">Tier 2</option>
+          <option value="3">Tier 3</option>
+        </select>
+        <select id="verified-filter">
+          <option value="all">Verified + unverified</option>
+          <option value="true">Verified only</option>
+          <option value="false">Unverified only</option>
+        </select>
+      </div>
+      <div class="table-wrap">
+        <div class="table-scroll">
+          <table>
+            <thead><tr><th>Company</th><th>Tier</th><th>ATS Platform</th><th>Status</th></tr></thead>
+            <tbody id="company-rows"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="row-count" id="row-count"></div>
+    </div>
+
+    <h3>Self-healing in action</h3>
+    <p class="section-sub">Real maintenance events, pulled from the scraper's own config notes — evidence the system adapts when a company changes its hiring stack.</p>
+    <div class="table-wrap" style="padding: 4px 18px;">
+      <div class="log-entry"><div class="log-icon">↻</div><div class="log-body"><div class="company">Uber</div><div class="note">Greenhouse board token silently changed from <code>uber</code> to <code>uberfreight</code> — detected and fixed by the alternate-token fallback list.</div></div></div>
+      <div class="log-entry"><div class="log-icon">↻</div><div class="log-body"><div class="company">Palo Alto Networks</div><div class="note">Moved off Greenhouse entirely, onto Workday — flagged <code>verified:false</code> pending re-confirmation rather than silently failing.</div></div></div>
+      <div class="log-entry"><div class="log-icon">↻</div><div class="log-body"><div class="company">Kearney</div><div class="note">Moved off Lever — same self-flagging behavior, with a Lever-alternates list queued for retry.</div></div></div>
+      <div class="log-entry"><div class="log-icon">✕</div><div class="log-body"><div class="company">BCG, Apple, Bain, LinkedIn</div><div class="note">Removed from Workday tracking entirely after their endpoints started blocking unauthenticated requests (HTTP 401) — rather than logging silent failures forever.</div></div></div>
+      <div class="log-entry"><div class="log-icon">i</div><div class="log-body"><div class="company">Amazon, Google, Microsoft</div><div class="note">Recognized as running custom in-house career sites, not Workday — routed to SmartRecruiters or manual config instead of wasting scrape attempts.</div></div></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>Anuprita Kaple · Cornell MEM 5400, 2026</div>
+    <div><a href="https://github.com/anuprita2000/mcp-server-assignment" target="_blank" rel="noopener">Full source on GitHub →</a></div>
+  </footer>
+</div>
+
+<script>
+const COMPANIES = [{"name":"Harbinger Motors","tier":2,"ats":"greenhouse","verified":true},{"name":"Moelis & Company","tier":2,"ats":"workday","verified":true},{"name":"HubSpot","tier":2,"ats":"greenhouse","verified":true},{"name":"LiveRamp","tier":2,"ats":"workday","verified":true},{"name":"Illumio","tier":2,"ats":"ashby","verified":true},{"name":"Axon Enterprise","tier":2,"ats":"greenhouse","verified":true},{"name":"Abbott Laboratories","tier":2,"ats":"workday","verified":true},{"name":"Trane Technologies","tier":2,"ats":"phenom","verified":true},{"name":"Renesas Electronics","tier":2,"ats":"smartrecruiters","verified":true},{"name":"Zuora","tier":2,"ats":"greenhouse","verified":true},{"name":"Qnity Electronics","tier":2,"ats":"phenom","verified":true},{"name":"Uber","tier":1,"ats":"greenhouse","verified":true},{"name":"Meta","tier":1,"ats":"smartrecruiters","verified":true},{"name":"OpenAI","tier":1,"ats":"ashby","verified":true},{"name":"Stripe","tier":1,"ats":"greenhouse","verified":true},{"name":"Airbnb","tier":1,"ats":"greenhouse","verified":true},{"name":"DoorDash","tier":2,"ats":"greenhouse","verified":true},{"name":"Waymo","tier":2,"ats":"greenhouse","verified":true},{"name":"Lyft","tier":3,"ats":"greenhouse","verified":true},{"name":"Rivian","tier":3,"ats":"smartrecruiters","verified":true},{"name":"Spotify","tier":2,"ats":"lever","verified":true},{"name":"Databricks","tier":2,"ats":"greenhouse","verified":true},{"name":"Snap","tier":2,"ats":"smartrecruiters","verified":true},{"name":"Pinterest","tier":2,"ats":"greenhouse","verified":true},{"name":"Dropbox","tier":3,"ats":"greenhouse","verified":true},{"name":"Reddit","tier":2,"ats":"greenhouse","verified":true},{"name":"Coinbase","tier":2,"ats":"greenhouse","verified":true},{"name":"Ramp","tier":2,"ats":"ashby","verified":true},{"name":"Palo Alto Networks","tier":2,"ats":"workday","verified":false},{"name":"Palantir","tier":2,"ats":"lever","verified":true},{"name":"Kearney","tier":2,"ats":"workday","verified":false},{"name":"NVIDIA","tier":2,"ats":"workday","verified":true},{"name":"Salesforce","tier":1,"ats":"workday","verified":true},{"name":"ServiceNow","tier":1,"ats":"workday","verified":false},{"name":"Accenture","tier":1,"ats":"workday","verified":true},{"name":"Deloitte","tier":1,"ats":"workday","verified":false},{"name":"IBM","tier":1,"ats":"workday","verified":false},{"name":"Mastercard","tier":2,"ats":"workday","verified":true},{"name":"PayPal","tier":2,"ats":"workday","verified":false},{"name":"Capital One","tier":2,"ats":"workday","verified":true},{"name":"Adobe","tier":2,"ats":"workday","verified":false},{"name":"Cisco","tier":2,"ats":"workday","verified":false},{"name":"Qualcomm","tier":2,"ats":"workday","verified":false},{"name":"Oracle","tier":2,"ats":"workday","verified":false},{"name":"Dell Technologies","tier":2,"ats":"workday","verified":false},{"name":"Walmart","tier":2,"ats":"workday","verified":false},{"name":"P&G","tier":2,"ats":"workday","verified":false},{"name":"Nike","tier":2,"ats":"workday","verified":false},{"name":"Honeywell","tier":2,"ats":"workday","verified":false},{"name":"Unilever","tier":2,"ats":"workday","verified":false},{"name":"General Mills","tier":2,"ats":"workday","verified":false},{"name":"Pfizer","tier":2,"ats":"workday","verified":false},{"name":"IQVIA","tier":2,"ats":"workday","verified":false},{"name":"AlixPartners","tier":2,"ats":"workday","verified":false},{"name":"KPMG","tier":2,"ats":"workday","verified":false},{"name":"EY","tier":1,"ats":"workday","verified":false},{"name":"McKinsey & Company","tier":1,"ats":"workday","verified":false},{"name":"Anthropic","tier":1,"ats":"greenhouse","verified":true},{"name":"Linear","tier":3,"ats":"ashby","verified":true},{"name":"Vercel","tier":3,"ats":"ashby","verified":true},{"name":"Scale AI","tier":2,"ats":"greenhouse","verified":true},{"name":"Booz Allen Hamilton","tier":1,"ats":"smartrecruiters","verified":true},{"name":"Hewlett Packard Enterprise","tier":2,"ats":"smartrecruiters","verified":true},{"name":"Philips","tier":2,"ats":"smartrecruiters","verified":true},{"name":"Tesla","tier":1,"ats":"smartrecruiters","verified":true},{"name":"Amazon","tier":1,"ats":"smartrecruiters","verified":true},{"name":"Microsoft","tier":1,"ats":"smartrecruiters","verified":true},{"name":"Google","tier":1,"ats":"smartrecruiters","verified":true},{"name":"Apple","tier":1,"ats":"smartrecruiters","verified":true},{"name":"TikTok","tier":1,"ats":"smartrecruiters","verified":true},{"name":"ByteDance","tier":1,"ats":"smartrecruiters","verified":true},{"name":"Expedia","tier":2,"ats":"smartrecruiters","verified":true},{"name":"Citadel","tier":2,"ats":"smartrecruiters","verified":true},{"name":"Bloomberg","tier":2,"ats":"smartrecruiters","verified":true},{"name":"Wells Fargo","tier":2,"ats":"smartrecruiters","verified":true},{"name":"American Express","tier":2,"ats":"smartrecruiters","verified":true},{"name":"Cognizant","tier":2,"ats":"smartrecruiters","verified":true},{"name":"Wipro","tier":2,"ats":"smartrecruiters","verified":true},{"name":"AbbVie","tier":2,"ats":"smartrecruiters","verified":true},{"name":"Medtronic","tier":2,"ats":"smartrecruiters","verified":true},{"name":"Amgen","tier":2,"ats":"smartrecruiters","verified":true},{"name":"Roche","tier":2,"ats":"smartrecruiters","verified":true},{"name":"Sanofi","tier":2,"ats":"smartrecruiters","verified":true},{"name":"Shell","tier":2,"ats":"smartrecruiters","verified":true},{"name":"HSBC","tier":2,"ats":"smartrecruiters","verified":true},{"name":"Citi","tier":2,"ats":"smartrecruiters","verified":true},{"name":"Morgan Stanley","tier":2,"ats":"smartrecruiters","verified":true},{"name":"Goldman Sachs","tier":1,"ats":"smartrecruiters","verified":true},{"name":"Micron","tier":2,"ats":"smartrecruiters","verified":true},{"name":"JPMorgan Chase","tier":1,"ats":"smartrecruiters","verified":true},{"name":"Bank of America","tier":1,"ats":"smartrecruiters","verified":true},{"name":"Deutsche Bank","tier":2,"ats":"smartrecruiters","verified":true},{"name":"UBS","tier":2,"ats":"smartrecruiters","verified":true},{"name":"Nomura","tier":2,"ats":"smartrecruiters","verified":true},{"name":"State Street","tier":2,"ats":"smartrecruiters","verified":true},{"name":"Royal Bank of Canada","tier":2,"ats":"smartrecruiters","verified":true},{"name":"BNP Paribas","tier":2,"ats":"smartrecruiters","verified":true},{"name":"PepsiCo","tier":2,"ats":"workday","verified":false},{"name":"Nestl\u00e9","tier":2,"ats":"smartrecruiters","verified":true},{"name":"L'Or\u00e9al","tier":2,"ats":"smartrecruiters","verified":true},{"name":"Eli Lilly","tier":2,"ats":"workday","verified":false},{"name":"Gilead Sciences","tier":2,"ats":"workday","verified":false},{"name":"EXL Service","tier":2,"ats":"smartrecruiters","verified":true},{"name":"Tech Mahindra","tier":2,"ats":"smartrecruiters","verified":true},{"name":"Tata Consultancy Services","tier":2,"ats":"smartrecruiters","verified":true},{"name":"Comcast","tier":2,"ats":"workday","verified":false},{"name":"HP Inc.","tier":2,"ats":"smartrecruiters","verified":true},{"name":"VMware","tier":2,"ats":"workday","verified":false},{"name":"Societe Generale","tier":2,"ats":"smartrecruiters","verified":true},{"name":"Kraft Heinz","tier":2,"ats":"smartrecruiters","verified":true}];
+
+function renderStats() {
+  const total = COMPANIES.length;
+  const atsSet = new Set(COMPANIES.map(c => c.ats));
+  const verified = COMPANIES.filter(c => c.verified).length;
+  document.getElementById('stat-companies').textContent = total;
+  document.getElementById('stat-ats').textContent = atsSet.size;
+  document.getElementById('stat-verified').textContent = `${verified}/${total}`;
+}
+
+function renderDistribution() {
+  const counts = {};
+  COMPANIES.forEach(c => counts[c.ats] = (counts[c.ats] || 0) + 1);
+  const max = Math.max(...Object.values(counts));
+  const sorted = Object.entries(counts).sort((a,b) => b[1]-a[1]);
+  const el = document.getElementById('dist-chart');
+  el.innerHTML = sorted.map(([name, n]) => `
+    <div class="dist-row">
+      <div class="dist-name">${name}</div>
+      <div class="dist-track"><div class="dist-fill" style="width:${(n/max*100).toFixed(0)}%"></div></div>
+      <div class="dist-count">${n}</div>
+    </div>
+  `).join('');
+}
+
+function populateAtsFilter() {
+  const atsSet = [...new Set(COMPANIES.map(c => c.ats))].sort();
+  const sel = document.getElementById('ats-filter');
+  atsSet.forEach(a => {
+    const opt = document.createElement('option');
+    opt.value = a; opt.textContent = a;
+    sel.appendChild(opt);
+  });
+}
+
+function renderTable() {
+  const q = document.getElementById('search-box').value.toLowerCase();
+  const atsF = document.getElementById('ats-filter').value;
+  const tierF = document.getElementById('tier-filter').value;
+  const verF = document.getElementById('verified-filter').value;
+
+  const filtered = COMPANIES.filter(c => {
+    if (q && !c.name.toLowerCase().includes(q)) return false;
+    if (atsF !== 'all' && c.ats !== atsF) return false;
+    if (tierF !== 'all' && String(c.tier) !== tierF) return false;
+    if (verF !== 'all' && String(c.verified) !== verF) return false;
+    return true;
+  });
+
+  document.getElementById('company-rows').innerHTML = filtered.map(c => `
+    <tr>
+      <td>${c.name}</td>
+      <td>${c.tier}</td>
+      <td>${c.ats}</td>
+      <td><span class="pill ${c.verified ? 'pill-verified' : 'pill-unverified'}">${c.verified ? 'VERIFIED' : 'UNVERIFIED'}</span></td>
+    </tr>
+  `).join('');
+  document.getElementById('row-count').textContent = `Showing ${filtered.length} of ${COMPANIES.length} companies`;
+}
+
+['search-box','ats-filter','tier-filter','verified-filter'].forEach(id => {
+  document.getElementById(id).addEventListener('input', renderTable);
+});
+
+renderStats();
+renderDistribution();
+populateAtsFilter();
+renderTable();
+
+// ── MCP Protocol Console ─────────────────────────────────────────────────────
+const TOOLS = {
+  "get_alerts": {
+    label: "get_alerts",
+    server: "weather.py (Python)",
+    desc: "Get active weather alerts for a US state. Real param: state (two-letter code).",
+    params: [{key:"state", label:"State code", default:"TX"}],
+    response: "Event: Heat Advisory\nArea: Travis County\nSeverity: Moderate\nDescription: Dangerously hot conditions with heat index values up to 108 expected this afternoon.\nInstructions: Drink plenty of fluids, stay in an air-conditioned room, and check on relatives and neighbors."
+  },
+  "get_forecast": {
+    label: "get_forecast",
+    server: "weather.py (Python)",
+    desc: "Get a 5-period forecast for a lat/long location.",
+    params: [{key:"latitude", label:"Latitude", default:"30.2672"}, {key:"longitude", label:"Longitude", default:"-97.7431"}],
+    response: "Tonight:\nTemperature: 71°F\nWind: 5 mph S\nForecast: Partly cloudy, with a low around 71.\n---\nThursday:\nTemperature: 96°F\nWind: 10 mph S\nForecast: Sunny and hot, with a high near 96."
+  },
+  "list-calendars": {
+    label: "list-calendars",
+    server: "macos-calendar-mcp (Node.js)",
+    desc: "List every calendar available on the Mac. No parameters.",
+    params: [],
+    response: '["Personal", "Work", "Birthdays", "US Holidays"]'
+  },
+  "create-event": {
+    label: "create-event",
+    server: "macos-calendar-mcp (Node.js)",
+    desc: "Create a real event via AppleScript. Required: title, startDate, endDate.",
+    params: [
+      {key:"title", label:"Title", default:"Team Sync"},
+      {key:"startDate", label:"Start (YYYY-MM-DD HH:MM)", default:"2026-09-05 14:00"},
+      {key:"endDate", label:"End (YYYY-MM-DD HH:MM)", default:"2026-09-05 15:00"},
+      {key:"calendar", label:"Calendar", default:"Personal"},
+    ],
+    response: 'Event "Team Sync" created in Personal calendar (2026-09-05 14:00 \u2013 15:00).'
+  },
+  "list-today-events": {
+    label: "list-today-events",
+    server: "macos-calendar-mcp (Node.js)",
+    desc: "View today's schedule for a given calendar.",
+    params: [{key:"calendar", label:"Calendar", default:"Personal"}],
+    response: "9:00 AM \u2013 9:30 AM   Standup\n2:00 PM \u2013 3:00 PM  Team Sync\n5:00 PM \u2013 5:15 PM  1:1 with manager"
+  },
+  "search-events": {
+    label: "search-events",
+    server: "macos-calendar-mcp (Node.js)",
+    desc: "Search events by keyword. Required: query.",
+    params: [{key:"query", label:"Search keyword", default:"sync"}, {key:"calendar", label:"Calendar", default:"Personal"}],
+    response: 'Found 2 matching events:\n- "Team Sync" \u2014 2026-09-05 14:00-15:00 (Personal)\n- "Design Sync" \u2014 2026-09-08 10:00-10:30 (Work)'
+  },
+};
+
+let currentTool = "get_alerts";
+let rpcId = 1;
+
+function renderConsoleTabs() {
+  const el = document.getElementById('console-tabs');
+  el.innerHTML = Object.keys(TOOLS).map(key =>
+    `<button class="console-tab ${key === currentTool ? 'active' : ''}" data-tool="${key}">${TOOLS[key].label}</button>`
+  ).join('');
+  el.querySelectorAll('.console-tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      currentTool = btn.dataset.tool;
+      renderConsoleTabs();
+      renderConsoleForm();
+    });
+  });
+}
+
+function renderConsoleForm() {
+  const tool = TOOLS[currentTool];
+  document.getElementById('console-desc').textContent = `${tool.server} — ${tool.desc}`;
+  const fieldsEl = document.getElementById('console-fields');
+  if (tool.params.length === 0) {
+    fieldsEl.innerHTML = '<p class="desc" style="margin:0">No parameters for this tool.</p>';
+  } else {
+    fieldsEl.innerHTML = tool.params.map(p => `
+      <div class="field-row">
+        <label>${p.label}</label>
+        <input type="text" data-key="${p.key}" value="${p.default}">
+      </div>
+    `).join('');
+  }
+  fieldsEl.querySelectorAll('input').forEach(inp => inp.addEventListener('input', updateConsoleOutput));
+  updateConsoleOutput();
+}
+
+function updateConsoleOutput() {
+  const tool = TOOLS[currentTool];
+  const args = {};
+  document.querySelectorAll('#console-fields input').forEach(inp => {
+    if (inp.value.trim() !== '') args[inp.dataset.key] = inp.value;
+  });
+  const request = {
+    jsonrpc: "2.0",
+    id: rpcId,
+    method: "tools/call",
+    params: { name: currentTool, arguments: args }
+  };
+  document.getElementById('console-request').textContent = JSON.stringify(request, null, 2);
+  document.getElementById('console-response').textContent = tool.response;
+}
+
+renderConsoleTabs();
+renderConsoleForm();
+
+</script>
+</body>
+</html>
